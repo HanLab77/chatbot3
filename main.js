@@ -3,19 +3,17 @@ const chatbox = document.getElementById('chatbox');
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 
-// 🟢 시스템 프롬프트 설정 (이 부분을 자유롭게 수정하여 보시면 됩니다)
+// 🟢 시스템 프롬프트 설정
 const systemPrompt = `
 당신은 친절한 정보 컴퓨터 교사입니다.
-당신은 파이썬 프로그래밍 교사입ㄴ니다.
-당신은 파이썬 인터프리터 이자 조력자입니다. 
+당신은 파이썬 프로그래밍 교사입니다.
+당신은 파이썬 인터프리터이자 조력자입니다.
 답을 줄 때는 학생의 기분을 한 번씩 물어봐주세요.
 예를 들어, 파이썬 인터프리터 역할을 하여 파이썬 코드 결과값을 알려주거나
-파이썬 코드를 요청하면 파이썬 코드를 생성해서 파이썬 코드를 눈에 잘보이도록 출력해줍니다.
-
-
+파이썬 코드를 요청하면 코드를 생성해서 눈에 잘 보이도록 출력해줍니다.
 `;
 
-// 🟡 대화 맥락을 저장하는 배열 (시스템 프롬프트 포함)
+// 🟡 대화 맥락을 저장하는 배열 (system + user + assistant 메시지 누적)
 const conversationHistory = [
   { role: "system", content: systemPrompt }
 ];
@@ -28,13 +26,18 @@ async function fetchGPTResponse() {
       "Authorization": `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-      model: "gpt-4-turbo", //이 부분에서 모델을 바꿔볼 수 있습니다.
+      model: "gpt-4-turbo",
       messages: conversationHistory,
-      temperature: 0.7, //이 부분은 모델의 창의성을 조절하는 부분입니다. 0정답중심, 1자유로운 창의적인 응답
+      temperature: 0.7
     }),
   });
 
   const data = await response.json();
+
+  if (!response.ok || !data.choices) {
+    throw new Error(data.error?.message || 'GPT 응답 실패');
+  }
+
   return data.choices[0].message.content;
 }
 
@@ -52,15 +55,19 @@ async function handleSend() {
   // 입력 필드 초기화
   userInput.value = '';
 
-  // GPT 응답 받아오기
-  const reply = await fetchGPTResponse();
+  try {
+    // GPT 응답 받아오기
+    const reply = await fetchGPTResponse();
 
-  // GPT 응답 UI에 출력
-  chatbox.innerHTML += `<div class="text-left mb-2 text-gray-800">GPT: ${reply}</div>`;
-  chatbox.scrollTop = chatbox.scrollHeight;
+    // GPT 응답 UI에 출력
+    chatbox.innerHTML += `<div class="text-left mb-2 text-gray-800 whitespace-pre-line">GPT: ${reply}</div>`;
+    chatbox.scrollTop = chatbox.scrollHeight;
 
-  // GPT 응답도 대화 이력에 추가
-  conversationHistory.push({ role: "assistant", content: reply });
+    // GPT 응답도 대화 이력에 추가
+    conversationHistory.push({ role: "assistant", content: reply });
+  } catch (err) {
+    chatbox.innerHTML += `<div class="text-left mb-2 text-red-500">GPT 응답 실패: ${err.message}</div>`;
+  }
 }
 
 // 버튼 클릭 시 작동
