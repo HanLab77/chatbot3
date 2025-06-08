@@ -1,18 +1,532 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>잠실 파이썬 프로그래밍 GPT시리즈즈 </title>
-  <script type="module" src="/main.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>파이썬 프로그래밍 학습환경</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+            min-height: 600px;
+        }
+
+        .left-panel, .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .section h2 {
+            color: #1e40af;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            border-radius: 2px;
+        }
+
+        .challenges {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .challenge-item {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            margin-bottom: 15px;
+            padding: 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .challenge-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2);
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+        }
+
+        .challenge-item h3 {
+            color: #1e40af;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .challenge-item p {
+            color: #475569;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .code-editor {
+            flex: 1;
+        }
+
+        #codeInput {
+            width: 100%;
+            height: 200px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            resize: vertical;
+            background: #f8fafc;
+            transition: border-color 0.3s ease;
+        }
+
+        #codeInput:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #2563eb, #1e40af);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(45deg, #059669, #047857);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-area {
+            flex: 1;
+        }
+
+        #resultOutput {
+            width: 100%;
+            height: 300px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: #1f2937;
+            color: #f9fafb;
+            resize: none;
+            overflow-y: auto;
+        }
+
+        .api-config {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .api-config h3 {
+            color: #92400e;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .api-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #3b82f6;
+            font-weight: 600;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f4f6;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 20px;
+                gap: 20px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
-<body class="bg-gray-100 p-4 flex flex-col items-center justify-center h-screen">
-  <div class="bg-white shadow-lg rounded-lg w-full max-w-lg p-4">
-    <h1 class="text-xl font-bold mb-4">파이썬 프로그래밍 GPT 챗봇 1</h1>
-    <div id="chatbox" class="h-64 overflow-auto bg-gray-50 p-2 rounded mb-2"></div>
-    <input type="text" id="userInput" placeholder="질문을 입력하세요..." class="border p-2 w-full rounded mb-2">
-    <button id="sendBtn" class="bg-blue-500 text-white rounded p-2 w-full">질문하기</button>
-  </div>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐍 파이썬 프로그래밍 학습환경</h1>
+            <p>단계별 학습과 실시간 피드백으로 파이썬을 마스터하세요!</p>
+        </div>
+
+        <div class="api-config">
+            <h3>🔑 OpenAI API 설정</h3>
+            <input type="password" id="apiKey" class="api-input" placeholder="OpenAI API 키를 입력하세요 (sk-...)">
+        </div>
+
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="section">
+                    <h2>🎯 도전과제</h2>
+                    <div class="challenges" id="challenges">
+                        <!-- 도전과제들이 여기에 동적으로 추가됩니다 -->
+                    </div>
+                </div>
+
+                <div class="section code-editor">
+                    <h2>💻 코드 편집기</h2>
+                    <textarea id="codeInput" placeholder="여기에 파이썬 코드를 입력하세요...
+
+# 예시:
+print('Hello, Python!')
+for i in range(5):
+    print(f'숫자: {i}')"></textarea>
+                    <div class="button-group">
+                        <button class="btn btn-primary" id="runButton">
+                            ▶️ 실행하기
+                        </button>
+                        <button class="btn btn-secondary" id="helpButton">
+                            💡 도움받기
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="section result-area">
+                    <h2>📊 실행 결과</h2>
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        처리 중입니다...
+                    </div>
+                    <textarea id="resultOutput" readonly placeholder="코드를 실행하면 결과가 여기에 표시됩니다..."></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 도전과제 데이터
+        const challenges = [
+            {
+                title: "1단계: Hello World",
+                description: "첫 번째 파이썬 프로그램을 작성해보세요. 'Hello, Python!'을 출력하는 코드를 작성하세요.",
+                code: "print('Hello, Python!')"
+            },
+            {
+                title: "2단계: 변수와 데이터 타입",
+                description: "문자열, 정수, 실수 변수를 만들고 출력해보세요.",
+                code: "name = '홍길동'\nage = 25\nheight = 175.5\nprint(f'이름: {name}, 나이: {age}, 키: {height}cm')"
+            },
+            {
+                title: "3단계: 리스트 다루기",
+                description: "과일 이름들을 담은 리스트를 만들고 반복문으로 출력해보세요.",
+                code: "fruits = ['사과', '바나나', '오렌지', '포도']\nfor fruit in fruits:\n    print(f'좋아하는 과일: {fruit}')"
+            },
+            {
+                title: "4단계: 조건문",
+                description: "숫자를 입력받아 짝수인지 홀수인지 판단하는 프로그램을 작성하세요.",
+                code: "number = 10\nif number % 2 == 0:\n    print(f'{number}는 짝수입니다')\nelse:\n    print(f'{number}는 홀수입니다')"
+            },
+            {
+                title: "5단계: 반복문 (for)",
+                description: "1부터 10까지의 숫자를 출력하고, 그 합을 계산해보세요.",
+                code: "total = 0\nfor i in range(1, 11):\n    print(f'숫자: {i}')\n    total += i\nprint(f'1부터 10까지의 합: {total}')"
+            },
+            {
+                title: "6단계: 함수 만들기",
+                description: "두 숫자를 더하는 함수를 만들고 사용해보세요.",
+                code: "def add_numbers(a, b):\n    return a + b\n\nresult = add_numbers(5, 3)\nprint(f'5 + 3 = {result}')"
+            },
+            {
+                title: "7단계: 딕셔너리",
+                description: "학생의 정보를 딕셔너리로 저장하고 출력해보세요.",
+                code: "student = {\n    '이름': '김학생',\n    '나이': 20,\n    '전공': '컴퓨터과학'\n}\nfor key, value in student.items():\n    print(f'{key}: {value}')"
+            },
+            {
+                title: "8단계: 예외 처리",
+                description: "0으로 나누기 오류를 try-except로 처리해보세요.",
+                code: "try:\n    a = 10\n    b = 0\n    result = a / b\n    print(f'결과: {result}')\nexcept ZeroDivisionError:\n    print('0으로 나눌 수 없습니다!')"
+            },
+            {
+                title: "9단계: 클래스 만들기",
+                description: "간단한 Dog 클래스를 만들고 객체를 생성해보세요.",
+                code: "class Dog:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\n    \n    def bark(self):\n        return f'{self.name}이 멍멍하고 짖습니다!'\n\nmy_dog = Dog('멍멍이', 3)\nprint(my_dog.bark())\nprint(f'{my_dog.name}는 {my_dog.age}살입니다.')"
+            },
+            {
+                title: "10단계: 파일 다루기",
+                description: "텍스트 파일을 생성하고 내용을 읽어보는 프로그램을 작성해보세요.",
+                code: "# 파일에 쓰기\nwith open('test.txt', 'w', encoding='utf-8') as f:\n    f.write('안녕하세요, 파이썬!')\n    f.write('\\n파일 처리를 배우고 있습니다.')\n\n# 파일 읽기\nwith open('test.txt', 'r', encoding='utf-8') as f:\n    content = f.read()\n    print('파일 내용:')\n    print(content)"
+            }
+        ];
+
+        // DOM 요소들
+        const challengesContainer = document.getElementById('challenges');
+        const codeInput = document.getElementById('codeInput');
+        const resultOutput = document.getElementById('resultOutput');
+        const runButton = document.getElementById('runButton');
+        const helpButton = document.getElementById('helpButton');
+        const apiKeyInput = document.getElementById('apiKey');
+        const loading = document.getElementById('loading');
+
+        // 도전과제 렌더링
+        function renderChallenges() {
+            challengesContainer.innerHTML = '';
+            challenges.forEach((challenge, index) => {
+                const challengeDiv = document.createElement('div');
+                challengeDiv.className = 'challenge-item';
+                challengeDiv.innerHTML = `
+                    <h3>${challenge.title}</h3>
+                    <p>${challenge.description}</p>
+                `;
+                challengeDiv.addEventListener('click', () => {
+                    codeInput.value = challenge.code;
+                    resultOutput.value = `${challenge.title} 코드가 로드되었습니다.\n실행 버튼을 눌러보세요!`;
+                });
+                challengesContainer.appendChild(challengeDiv);
+            });
+        }
+
+        // OpenAI API 호출
+        async function callOpenAI(prompt, isHelp = false) {
+            const apiKey = apiKeyInput.value.trim();
+            if (!apiKey) {
+                return 'OpenAI API 키를 먼저 입력해주세요.';
+            }
+
+            try {
+                const systemMessage = isHelp 
+                    ? "당신은 파이썬 프로그래밍 튜터입니다. 사용자의 코드를 분석하고 문제점을 찾아 자세한 설명과 해결방법을 제시해주세요. 한국어로 답변해주세요."
+                    : "당신은 파이썬 코드 실행 시뮬레이터입니다. 주어진 파이썬 코드를 분석하고 실행 결과를 예측해서 보여주세요. 오류가 있다면 오류 메시지와 해결 방법을 함께 제시해주세요. 한국어로 답변해주세요.";
+
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-3.5-turbo',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: systemMessage
+                            },
+                            {
+                                role: 'user',
+                                content: prompt
+                            }
+                        ],
+                        max_tokens: 1000,
+                        temperature: 0.7
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API 오류: ${response.status}`);
+                }
+
+                const data = await response.json();
+                return data.choices[0].message.content;
+            } catch (error) {
+                return `오류가 발생했습니다: ${error.message}\n\nAPI 키가 올바른지 확인해주세요.`;
+            }
+        }
+
+        // 코드 실행
+        async function runCode() {
+            const code = codeInput.value.trim();
+            if (!code) {
+                resultOutput.value = '코드를 입력해주세요!';
+                return;
+            }
+
+            loading.classList.add('show');
+            runButton.disabled = true;
+            helpButton.disabled = true;
+
+            const prompt = `다음 파이썬 코드를 실행했을 때의 결과를 보여주세요:\n\n${code}\n\n실행 결과나 오류 메시지를 정확하게 예측해서 보여주고, 코드에 대한 간단한 설명도 포함해주세요.`;
+            
+            const result = await callOpenAI(prompt, false);
+            
+            loading.classList.remove('show');
+            runButton.disabled = false;
+            helpButton.disabled = false;
+            
+            resultOutput.value = `=== 실행 결과 ===\n\n${result}`;
+        }
+
+        // 도움말
+        async function getHelp() {
+            const code = codeInput.value.trim();
+            if (!code) {
+                resultOutput.value = '도움을 받을 코드를 먼저 입력해주세요!';
+                return;
+            }
+
+            loading.classList.add('show');
+            runButton.disabled = true;
+            helpButton.disabled = true;
+
+            const prompt = `다음 파이썬 코드를 분석해주세요:\n\n${code}\n\n코드의 동작 방식을 단계별로 설명하고, 개선점이나 문제점이 있다면 자세히 알려주세요. 초보자도 이해할 수 있도록 친절하게 설명해주세요.`;
+            
+            const result = await callOpenAI(prompt, true);
+            
+            loading.classList.remove('show');
+            runButton.disabled = false;
+            helpButton.disabled = false;
+            
+            resultOutput.value = `=== 코드 도움말 ===\n\n${result}`;
+        }
+
+        // 이벤트 리스너
+        runButton.addEventListener('click', runCode);
+        helpButton.addEventListener('click', getHelp);
+
+        // API 키 저장 (간단한 로컬 저장)
+        apiKeyInput.addEventListener('change', () => {
+            if (apiKeyInput.value.trim()) {
+                resultOutput.value = 'API 키가 설정되었습니다. 이제 코드를 실행할 수 있습니다!';
+            }
+        });
+
+        // Enter 키로 코드 실행 (Ctrl+Enter)
+        codeInput.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                runCode();
+            }
+        });
+
+        // 초기화
+        renderChallenges();
+        resultOutput.value = '파이썬 학습환경에 오신 것을 환영합니다!\n\n1. 먼저 OpenAI API 키를 입력해주세요\n2. 좌측의 도전과제를 클릭하거나 직접 코드를 작성해보세요\n3. 실행하기 버튼을 눌러 결과를 확인하세요\n4. 도움받기 버튼으로 상세한 설명을 받을 수 있습니다\n\n팁: Ctrl+Enter로도 코드를 실행할 수 있습니다!';
+    </script>
 </body>
 </html>
