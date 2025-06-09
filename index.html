@@ -330,7 +330,8 @@ for i in range(5):
 
     <script>
         // 내부 API 키 설정 (실제 사용 시 여기에 실제 API 키를 입력하세요)
-           const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+        const OPENAI_API_KEY ='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'
+
         
         // 도전과제 데이터
         const challenges = [
@@ -414,7 +415,7 @@ for i in range(5):
 
         // OpenAI API 호출
         async function callOpenAI(prompt, isHelp = false) {
-            if (!OPENAI_API_KEY || OPENAI_API_KEY ===apiKey){
+            if (!OPENAI_API_KEY || OPENAI_API_KEY === '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'){
                 return '⚠️ API 키가 설정되지 않았습니다.\n\n소스 코드의 OPENAI_API_KEY 변수에 실제 OpenAI API 키를 입력해주세요.\n\n지금은 시뮬레이션 모드로 실행됩니다:\n\n=== 시뮬레이션 결과 ===\n코드가 정상적으로 실행될 것으로 예상됩니다.\n실제 결과를 보려면 API 키를 설정해주세요.';
             }
 
@@ -515,12 +516,11 @@ for i in range(5):
             }
         });
 
-         
         // 초기화
         renderChallenges();
         
         // API 키 상태에 따른 초기 메시지
-        if (!OPENAI_API_KEY || OPENAI_API_KEY === apiKey) {
+        if (!OPENAI_API_KEY || OPENAI_API_KEY === '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'){
             resultOutput.value = '파이썬 학습환경에 오신 것을 환영합니다!\n\n⚠️ 현재 시뮬레이션 모드입니다.\n실제 AI 피드백을 받으려면 소스 코드의 OPENAI_API_KEY 변수에 실제 API 키를 설정해주세요.\n\n사용 방법:\n1. 좌측의 도전과제를 클릭하거나 직접 코드를 작성해보세요\n2. 실행하기 버튼을 눌러 결과를 확인하세요\n3. 도움받기 버튼으로 상세한 설명을 받을 수 있습니다\n\n팁: Ctrl+Enter로도 코드를 실행할 수 있습니다!';
         } else {
             resultOutput.value = '파이썬 학습환경에 오신 것을 환영합니다!\n\n✅ OpenAI API가 설정되어 있습니다.\n이제 AI 튜터의 도움을 받으며 학습할 수 있습니다!\n\n사용 방법:\n1. 좌측의 도전과제를 클릭하거나 직접 코드를 작성해보세요\n2. 실행하기 버튼을 눌러 AI가 예측한 실행 결과를 확인하세요\n3. 도움받기 버튼으로 상세한 코드 분석을 받을 수 있습니다\n\n팁: Ctrl+Enter로도 코드를 실행할 수 있습니다!';
