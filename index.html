@@ -84,33 +84,9 @@
             border-radius: 2px;
         }
 
-        .challenges-section {
-            flex: 0 0 auto;
-            min-height: 400px;
-        }
-
         .challenges {
-            max-height: 400px;
+            max-height: 300px;
             overflow-y: auto;
-            padding-right: 10px;
-        }
-
-        .challenges::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .challenges::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 4px;
-        }
-
-        .challenges::-webkit-scrollbar-thumb {
-            background: #3b82f6;
-            border-radius: 4px;
-        }
-
-        .challenges::-webkit-scrollbar-thumb:hover {
-            background: #2563eb;
         }
 
         .challenge-item {
@@ -121,24 +97,6 @@
             cursor: pointer;
             transition: all 0.3s ease;
             border-left: 4px solid #3b82f6;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .challenge-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-
-        .challenge-item:hover::before {
-            transform: scaleX(1);
         }
 
         .challenge-item:hover {
@@ -147,62 +105,16 @@
             background: linear-gradient(135deg, #dbeafe, #bfdbfe);
         }
 
-        .challenge-item.selected {
-            background: linear-gradient(135deg, #dbeafe, #93c5fd);
-            border-left-color: #1d4ed8;
-            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
-        }
-
-        .challenge-item.selected::before {
-            transform: scaleX(1);
-        }
-
         .challenge-item h3 {
             color: #1e40af;
             margin-bottom: 8px;
             font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .challenge-item.selected h3 {
-            color: #1d4ed8;
-            font-weight: 700;
-        }
-
-        .challenge-number {
-            background: #3b82f6;
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .challenge-item.selected .challenge-number {
-            background: #1d4ed8;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
         }
 
         .challenge-item p {
             color: #475569;
             font-size: 0.9rem;
             line-height: 1.5;
-        }
-
-        .challenge-item.selected p {
-            color: #374151;
-            font-weight: 500;
         }
 
         .code-editor {
@@ -344,34 +256,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        .progress-indicator {
-            background: #f1f5f9;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .progress-bar {
-            background: #e2e8f0;
-            height: 8px;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
-            height: 100%;
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-
-        .progress-text {
-            text-align: center;
-            margin-top: 10px;
-            color: #475569;
-            font-size: 0.9rem;
-        }
-
         @media (max-width: 1200px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -391,10 +275,6 @@
             .button-group {
                 flex-direction: column;
             }
-
-            .challenges {
-                max-height: 300px;
-            }
         }
     </style>
 </head>
@@ -412,14 +292,8 @@
 
         <div class="main-content">
             <div class="left-panel">
-                <div class="section challenges-section">
+                <div class="section">
                     <h2>🎯 도전과제</h2>
-                    <div class="progress-indicator">
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progressFill"></div>
-                        </div>
-                        <div class="progress-text" id="progressText">진행률: 0/10 (0%)</div>
-                    </div>
                     <div class="challenges" id="challenges">
                         <!-- 도전과제들이 여기에 동적으로 추가됩니다 -->
                     </div>
@@ -461,64 +335,54 @@ for i in range(5):
         // 도전과제 데이터
         const challenges = [
             {
-                title: "Hello World",
+                title: "1단계: Hello World",
                 description: "첫 번째 파이썬 프로그램을 작성해보세요. 'Hello, Python!'을 출력하는 코드를 작성하세요.",
-                code: "print('Hello, Python!')",
-                completed: false
+                code: "print('Hello, Python!')"
             },
             {
-                title: "변수와 데이터 타입",
+                title: "2단계: 변수와 데이터 타입",
                 description: "문자열, 정수, 실수 변수를 만들고 출력해보세요.",
-                code: "name = '홍길동'\nage = 25\nheight = 175.5\nprint(f'이름: {name}, 나이: {age}, 키: {height}cm')",
-                completed: false
+                code: "name = '홍길동'\nage = 25\nheight = 175.5\nprint(f'이름: {name}, 나이: {age}, 키: {height}cm')"
             },
             {
-                title: "리스트 다루기",
+                title: "3단계: 리스트 다루기",
                 description: "과일 이름들을 담은 리스트를 만들고 반복문으로 출력해보세요.",
-                code: "fruits = ['사과', '바나나', '오렌지', '포도']\nfor fruit in fruits:\n    print(f'좋아하는 과일: {fruit}')",
-                completed: false
+                code: "fruits = ['사과', '바나나', '오렌지', '포도']\nfor fruit in fruits:\n    print(f'좋아하는 과일: {fruit}')"
             },
             {
-                title: "조건문",
+                title: "4단계: 조건문",
                 description: "숫자를 입력받아 짝수인지 홀수인지 판단하는 프로그램을 작성하세요.",
-                code: "number = 10\nif number % 2 == 0:\n    print(f'{number}는 짝수입니다')\nelse:\n    print(f'{number}는 홀수입니다')",
-                completed: false
+                code: "number = 10\nif number % 2 == 0:\n    print(f'{number}는 짝수입니다')\nelse:\n    print(f'{number}는 홀수입니다')"
             },
             {
-                title: "반복문 (for)",
+                title: "5단계: 반복문 (for)",
                 description: "1부터 10까지의 숫자를 출력하고, 그 합을 계산해보세요.",
-                code: "total = 0\nfor i in range(1, 11):\n    print(f'숫자: {i}')\n    total += i\nprint(f'1부터 10까지의 합: {total}')",
-                completed: false
+                code: "total = 0\nfor i in range(1, 11):\n    print(f'숫자: {i}')\n    total += i\nprint(f'1부터 10까지의 합: {total}')"
             },
             {
-                title: "함수 만들기",
+                title: "6단계: 함수 만들기",
                 description: "두 숫자를 더하는 함수를 만들고 사용해보세요.",
-                code: "def add_numbers(a, b):\n    return a + b\n\nresult = add_numbers(5, 3)\nprint(f'5 + 3 = {result}')",
-                completed: false
+                code: "def add_numbers(a, b):\n    return a + b\n\nresult = add_numbers(5, 3)\nprint(f'5 + 3 = {result}')"
             },
             {
-                title: "딕셔너리",
+                title: "7단계: 딕셔너리",
                 description: "학생의 정보를 딕셔너리로 저장하고 출력해보세요.",
-                code: "student = {\n    '이름': '김학생',\n    '나이': 20,\n    '전공': '컴퓨터과학'\n}\nfor key, value in student.items():\n    print(f'{key}: {value}')",
-                completed: false
+                code: "student = {\n    '이름': '김학생',\n    '나이': 20,\n    '전공': '컴퓨터과학'\n}\nfor key, value in student.items():\n    print(f'{key}: {value}')"
             },
             {
-                title: "예외 처리",
+                title: "8단계: 예외 처리",
                 description: "0으로 나누기 오류를 try-except로 처리해보세요.",
-                code: "try:\n    a = 10\n    b = 0\n    result = a / b\n    print(f'결과: {result}')\nexcept ZeroDivisionError:\n    print('0으로 나눌 수 없습니다!')",
-                completed: false
+                code: "try:\n    a = 10\n    b = 0\n    result = a / b\n    print(f'결과: {result}')\nexcept ZeroDivisionError:\n    print('0으로 나눌 수 없습니다!')"
             },
             {
-                title: "클래스 만들기",
+                title: "9단계: 클래스 만들기",
                 description: "간단한 Dog 클래스를 만들고 객체를 생성해보세요.",
-                code: "class Dog:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\n    \n    def bark(self):\n        return f'{self.name}이 멍멍하고 짖습니다!'\n\nmy_dog = Dog('멍멍이', 3)\nprint(my_dog.bark())\nprint(f'{my_dog.name}는 {my_dog.age}살입니다.')",
-                completed: false
+                code: "class Dog:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\n    \n    def bark(self):\n        return f'{self.name}이 멍멍하고 짖습니다!'\n\nmy_dog = Dog('멍멍이', 3)\nprint(my_dog.bark())\nprint(f'{my_dog.name}는 {my_dog.age}살입니다.')"
             },
             {
-                title: "파일 다루기",
+                title: "10단계: 파일 다루기",
                 description: "텍스트 파일을 생성하고 내용을 읽어보는 프로그램을 작성해보세요.",
-                code: "# 파일에 쓰기\nwith open('test.txt', 'w', encoding='utf-8') as f:\n    f.write('안녕하세요, 파이썬!')\n    f.write('\\n파일 처리를 배우고 있습니다.')\n\n# 파일 읽기\nwith open('test.txt', 'r', encoding='utf-8') as f:\n    content = f.read()\n    print('파일 내용:')\n    print(content)",
-                completed: false
+                code: "# 파일에 쓰기\nwith open('test.txt', 'w', encoding='utf-8') as f:\n    f.write('안녕하세요, 파이썬!')\n    f.write('\\n파일 처리를 배우고 있습니다.')\n\n# 파일 읽기\nwith open('test.txt', 'r', encoding='utf-8') as f:\n    content = f.read()\n    print('파일 내용:')\n    print(content)"
             }
         ];
 
@@ -530,65 +394,32 @@ for i in range(5):
         const helpButton = document.getElementById('helpButton');
         const apiKeyInput = document.getElementById('apiKey');
         const loading = document.getElementById('loading');
-        const progressFill = document.getElementById('progressFill');
-        const progressText = document.getElementById('progressText');
-
-        let selectedChallengeIndex = -1;
-
-        // 진행률 업데이트
-        function updateProgress() {
-            const completedCount = challenges.filter(c => c.completed).length;
-            const totalCount = challenges.length;
-            const percentage = Math.round((completedCount / totalCount) * 100);
-            
-            progressFill.style.width = `${percentage}%`;
-            progressText.textContent = `진행률: ${completedCount}/${totalCount} (${percentage}%)`;
-        }
 
         // 도전과제 렌더링
         function renderChallenges() {
             challengesContainer.innerHTML = '';
             challenges.forEach((challenge, index) => {
                 const challengeDiv = document.createElement('div');
-                challengeDiv.className = `challenge-item ${selectedChallengeIndex === index ? 'selected' : ''}`;
+                challengeDiv.className = 'challenge-item';
                 challengeDiv.innerHTML = `
-                    <h3>
-                        <span class="challenge-number">${index + 1}</span>
-                        ${challenge.title}
-                        ${challenge.completed ? '✅' : ''}
-                    </h3>
+                    <h3>${challenge.title}</h3>
                     <p>${challenge.description}</p>
                 `;
                 challengeDiv.addEventListener('click', () => {
-                    selectChallenge(index);
+                    codeInput.value = challenge.code;
+                    resultOutput.value = `${challenge.title} 코드가 로드되었습니다.\n실행 버튼을 눌러보세요!`;
                 });
                 challengesContainer.appendChild(challengeDiv);
             });
-            updateProgress();
-        }
-
-        // 도전과제 선택
-        function selectChallenge(index) {
-            selectedChallengeIndex = index;
-            const challenge = challenges[index];
-            
-            codeInput.value = challenge.code;
-            const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
-            resultOutput.value = `${index + 1}단계: ${challenge.title} 코드가 로드되었습니다.\n실행 버튼을 눌러보세요!`;
-            
-            renderChallenges();
-        }
-
-        // 도전과제 완료 처리
-        function markChallengeCompleted(index) {
-            if (index >= 0 && index < challenges.length) {
-                challenges[index].completed = true;
-                renderChallenges();
-            }
         }
 
         // OpenAI API 호출
-      
+        async function callOpenAI(prompt, isHelp = false) {
+            const apiKey = apiKeyInput.value.trim();
+            if (!apiKey) {
+                return 'OpenAI API 키를 먼저 입력해주세요.';
+            }
+
             try {
                 const systemMessage = isHelp 
                     ? "당신은 파이썬 프로그래밍 튜터입니다. 사용자의 코드를 분석하고 문제점을 찾아 자세한 설명과 해결방법을 제시해주세요. 한국어로 답변해주세요."
@@ -649,13 +480,6 @@ for i in range(5):
             helpButton.disabled = false;
             
             resultOutput.value = `=== 실행 결과 ===\n\n${result}`;
-
-            // 선택된 도전과제가 있고 성공적으로 실행되었다면 완료 처리
-            if (selectedChallengeIndex >= 0 && !result.includes('오류')) {
-                setTimeout(() => {
-                    markChallengeCompleted(selectedChallengeIndex);
-                }, 1000);
-            }
         }
 
         // 도움말
@@ -685,7 +509,7 @@ for i in range(5):
         runButton.addEventListener('click', runCode);
         helpButton.addEventListener('click', getHelp);
 
-        // API 키 저장
+        // API 키 저장 (간단한 로컬 저장)
         apiKeyInput.addEventListener('change', () => {
             if (apiKeyInput.value.trim()) {
                 resultOutput.value = 'API 키가 설정되었습니다. 이제 코드를 실행할 수 있습니다!';
@@ -702,7 +526,7 @@ for i in range(5):
 
         // 초기화
         renderChallenges();
-        resultOutput.value = '파이썬 학습환경에 오신 것을 환영합니다!\n\n1. 먼저 OpenAI API 키를 입력해주세요\n2. 좌측의 도전과제를 클릭하여 선택해보세요\n3. 실행하기 버튼을 눌러 결과를 확인하세요\n4. 도움받기 버튼으로 상세한 설명을 받을 수 있습니다\n\n팁: Ctrl+Enter로도 코드를 실행할 수 있습니다!';
+        resultOutput.value = '파이썬 학습환경에 오신 것을 환영합니다!\n\n1. 먼저 OpenAI API 키를 입력해주세요\n2. 좌측의 도전과제를 클릭하거나 직접 코드를 작성해보세요\n3. 실행하기 버튼을 눌러 결과를 확인하세요\n4. 도움받기 버튼으로 상세한 설명을 받을 수 있습니다\n\n팁: Ctrl+Enter로도 코드를 실행할 수 있습니다!';
     </script>
 </body>
 </html>
