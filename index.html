@@ -415,7 +415,7 @@ for i in range(5):
 
         // OpenAI API 호출
         async function callOpenAI(prompt, isHelp = false) {
-            const apiKey = apiKeyInput.value.trim();
+            const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
             if (!apiKey) {
                 return 'OpenAI API 키를 먼저 입력해주세요.';
             }
