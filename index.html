@@ -45,6 +45,45 @@
             opacity: 0.9;
         }
 
+        .api-setup {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 12px;
+        }
+
+        .api-setup h3 {
+            color: #d97706;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .api-setup input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #d97706;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .api-setup button {
+            background: linear-gradient(45deg, #f59e0b, #d97706);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .api-setup button:hover {
+            background: linear-gradient(45deg, #d97706, #b45309);
+            transform: translateY(-2px);
+        }
+
         .main-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -309,16 +348,6 @@
                 flex-direction: column;
             }
         }
-
-        .error-message {
-            background: #fee2e2;
-            border: 1px solid #fecaca;
-            color: #991b1b;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 10px 0;
-            font-size: 14px;
-        }
     </style>
 </head>
 <body>
@@ -328,12 +357,24 @@
             <p>단계별 학습과 실시간 피드백으로 파이썬을 마스터하세요!</p>
         </div>
 
-        <div class="api-status" id="apiStatus">
+        <div class="api-setup" id="apiSetup">
+            <h3>🔑 OpenAI API 키 설정</h3>
+            <p style="margin-bottom: 15px; color: #92400e;">
+                AI 튜터 기능을 사용하려면 OpenAI API 키를 입력해주세요. (선택사항)
+            </p>
+            <input type="password" id="apiKeyInput" placeholder="sk-로 시작하는 API 키를 입력하세요...">
+            <div style="margin-top: 10px;">
+                <button onclick="app.setApiKey()">API 키 설정</button>
+                <button onclick="app.toggleApiSetup()" style="margin-left: 10px; background: #6b7280;">건너뛰기</button>
+            </div>
+        </div>
+
+        <div class="api-status" id="apiStatus" style="display: none;">
             <h3 id="apiStatusTitle">🔑 API 상태 확인 중...</h3>
             <p id="apiStatusMessage">환경 설정을 확인하고 있습니다.</p>
         </div>
 
-        <div class="main-content">
+        <div class="main-content" id="mainContent" style="display: none;">
             <div class="left-panel">
                 <div class="section">
                     <h2>🎯 도전과제</h2>
@@ -373,25 +414,8 @@ for i in range(5):
         </div>
     </div>
 
-    <script type="module">
-        // 환경 변수에서 API 키 가져오기 (Vite/Netlify 지원)
-        const getApiKey = () => {
-            // Vite 환경변수
-            if (typeof import.meta !== 'undefined' && import.meta.env) {
-                return import.meta.env.VITE_OPENAI_API_KEY;
-            }
-            // Netlify 환경변수
-            if (typeof process !== 'undefined' && process.env) {
-                return process.env.VITE_OPENAI_API_KEY || process.env.OPENAI_API_KEY;
-            }
-            // 브라우저 환경에서 전역 변수로 설정된 경우
-            if (typeof window !== 'undefined' && window.OPENAI_API_KEY) {
-                return window.OPENAI_API_KEY;
-            }
-            return null;
-        };
-
-        // 도전과제 데이터 (ES6 모듈 방식)
+    <script>
+        // 도전과제 데이터
         const CHALLENGES = [
             {
                 title: "1단계: Hello World",
@@ -441,23 +465,24 @@ for i in range(5):
             {
                 title: "10단계: 파일 다루기",
                 description: "텍스트 파일을 생성하고 내용을 읽어보는 프로그램을 작성해보세요.",
-                code: "# 파일에 쓰기\nwith open('test.txt', 'w', encoding='utf-8') as f:\n    f.write('안녕하세요, 파이썬!')\n    f.write('\\n파일 처리를 배우고 있습니다.')\n\n# 파일 읽기\nwith open('test.txt', 'r', encoding='utf-8') as f:\n    content = f.read()\n    print('파일 내용:')\n    print(content)"
+                code: "# 파일에 쓰기 (시뮬레이션)\nfile_content = '안녕하세요, 파이썬!\\n파일 처리를 배우고 있습니다.'\nprint('파일 내용을 작성했습니다:')\nprint(file_content)\n\n# 실제 환경에서는 다음과 같이 사용:\n# with open('test.txt', 'w', encoding='utf-8') as f:\n#     f.write(file_content)"
             }
         ];
 
-        // 애플리케이션 상태 관리 클래스
+        // 애플리케이션 클래스
         class PythonLearningApp {
             constructor() {
-                this.apiKey = getApiKey();
+                this.apiKey = null;
                 this.initializeElements();
                 this.bindEvents();
-                this.checkApiStatus();
-                this.renderChallenges();
-                this.showWelcomeMessage();
+                this.showApiSetup();
             }
 
             initializeElements() {
                 this.elements = {
+                    apiSetup: document.getElementById('apiSetup'),
+                    apiKeyInput: document.getElementById('apiKeyInput'),
+                    mainContent: document.getElementById('mainContent'),
                     challengesContainer: document.getElementById('challenges'),
                     codeInput: document.getElementById('codeInput'),
                     resultOutput: document.getElementById('resultOutput'),
@@ -471,15 +496,57 @@ for i in range(5):
             }
 
             bindEvents() {
-                this.elements.runButton.addEventListener('click', () => this.runCode());
-                this.elements.helpButton.addEventListener('click', () => this.getHelp());
+                if (this.elements.runButton) {
+                    this.elements.runButton.addEventListener('click', () => this.runCode());
+                }
+                if (this.elements.helpButton) {
+                    this.elements.helpButton.addEventListener('click', () => this.getHelp());
+                }
                 
-                this.elements.codeInput.addEventListener('keydown', (e) => {
-                    if (e.ctrlKey && e.key === 'Enter') {
-                        e.preventDefault();
-                        this.runCode();
-                    }
-                });
+                if (this.elements.codeInput) {
+                    this.elements.codeInput.addEventListener('keydown', (e) => {
+                        if (e.ctrlKey && e.key === 'Enter') {
+                            e.preventDefault();
+                            this.runCode();
+                        }
+                    });
+                }
+
+                // Enter 키로 API 키 설정
+                if (this.elements.apiKeyInput) {
+                    this.elements.apiKeyInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            this.setApiKey();
+                        }
+                    });
+                }
+            }
+
+            showApiSetup() {
+                this.elements.apiSetup.style.display = 'block';
+                this.elements.mainContent.style.display = 'none';
+                this.elements.apiStatus.style.display = 'none';
+            }
+
+            toggleApiSetup() {
+                this.elements.apiSetup.style.display = 'none';
+                this.elements.mainContent.style.display = 'grid';
+                this.elements.apiStatus.style.display = 'block';
+                this.checkApiStatus();
+                this.renderChallenges();
+                this.showWelcomeMessage();
+            }
+
+            setApiKey() {
+                const apiKey = this.elements.apiKeyInput.value.trim();
+                if (apiKey && apiKey.startsWith('sk-')) {
+                    this.apiKey = apiKey;
+                    this.toggleApiSetup();
+                } else if (apiKey) {
+                    alert('올바른 API 키 형식이 아닙니다. sk-로 시작하는 키를 입력해주세요.');
+                } else {
+                    alert('API 키를 입력해주세요.');
+                }
             }
 
             checkApiStatus() {
@@ -489,14 +556,10 @@ for i in range(5):
                     apiStatus.className = 'api-status connected';
                     apiStatusTitle.textContent = '🔑 API 연결됨';
                     apiStatusMessage.textContent = 'OpenAI API가 설정되어 있습니다. AI 튜터와 함께 학습하세요!';
-                } else if (this.apiKey) {
-                    apiStatus.className = 'api-status error';
-                    apiStatusTitle.textContent = '⚠️ API 키 오류';
-                    apiStatusMessage.textContent = 'API 키 형식이 올바르지 않습니다. sk-로 시작하는 유효한 키를 설정해주세요.';
                 } else {
                     apiStatus.className = 'api-status disconnected';
-                    apiStatusTitle.textContent = '⚠️ API 키 필요';
-                    apiStatusMessage.textContent = '환경변수 VITE_OPENAI_API_KEY 또는 OPENAI_API_KEY를 설정해주세요.';
+                    apiStatusTitle.textContent = '⚠️ 시뮬레이션 모드';
+                    apiStatusMessage.textContent = 'API 키가 설정되지 않아 시뮬레이션 모드로 실행됩니다.';
                 }
             }
 
@@ -541,9 +604,14 @@ for i in range(5):
                 this.setLoadingState(true);
                 
                 try {
-                    const prompt = `다음 파이썬 코드를 실행했을 때의 결과를 보여주세요:\n\n${code}\n\n실행 결과나 오류 메시지를 정확하게 예측해서 보여주고, 코드에 대한 간단한 설명도 포함해주세요.`;
-                    const result = await this.callOpenAI(prompt, false);
-                    this.showResult(`=== 실행 결과 ===\n\n${result}`);
+                    if (this.apiKey) {
+                        const prompt = `다음 파이썬 코드를 실행했을 때의 결과를 보여주세요:\n\n${code}\n\n실행 결과나 오류 메시지를 정확하게 예측해서 보여주고, 코드에 대한 간단한 설명도 포함해주세요.`;
+                        const result = await this.callOpenAI(prompt, false);
+                        this.showResult(`=== 실행 결과 ===\n\n${result}`);
+                    } else {
+                        const result = this.simulateCodeExecution(code);
+                        this.showResult(result);
+                    }
                 } catch (error) {
                     this.handleError(error);
                 } finally {
@@ -561,9 +629,14 @@ for i in range(5):
                 this.setLoadingState(true);
                 
                 try {
-                    const prompt = `다음 파이썬 코드를 분석해주세요:\n\n${code}\n\n코드의 동작 방식을 단계별로 설명하고, 개선점이나 문제점이 있다면 자세히 알려주세요. 초보자도 이해할 수 있도록 친절하게 설명해주세요.`;
-                    const result = await this.callOpenAI(prompt, true);
-                    this.showResult(`=== 코드 도움말 ===\n\n${result}`);
+                    if (this.apiKey) {
+                        const prompt = `다음 파이썬 코드를 분석해주세요:\n\n${code}\n\n코드의 동작 방식을 단계별로 설명하고, 개선점이나 문제점이 있다면 자세히 알려주세요. 초보자도 이해할 수 있도록 친절하게 설명해주세요.`;
+                        const result = await this.callOpenAI(prompt, true);
+                        this.showResult(`=== 코드 도움말 ===\n\n${result}`);
+                    } else {
+                        const result = this.simulateCodeHelp(code);
+                        this.showResult(result);
+                    }
                 } catch (error) {
                     this.handleError(error);
                 } finally {
@@ -572,10 +645,6 @@ for i in range(5):
             }
 
             async callOpenAI(prompt, isHelp = false) {
-                if (!this.apiKey || !this.apiKey.startsWith('sk-')) {
-                    return this.getSimulationResult();
-                }
-
                 const systemMessage = isHelp 
                     ? "당신은 파이썬 프로그래밍 튜터입니다. 사용자의 코드를 분석하고 문제점을 찾아 자세한 설명과 해결방법을 제시해주세요. 한국어로 답변해주세요."
                     : "당신은 파이썬 코드 실행 시뮬레이터입니다. 주어진 파이썬 코드를 분석하고 실행 결과를 예측해서 보여주세요. 오류가 있다면 오류 메시지와 해결 방법을 함께 제시해주세요. 한국어로 답변해주세요.";
@@ -598,56 +667,63 @@ for i in range(5):
                 });
 
                 if (!response.ok) {
-                    throw new Error(`API 오류: ${response.status} - ${response.statusText}`);
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(`API 오류 (${response.status}): ${errorData.error?.message || response.statusText}`);
                 }
 
                 const data = await response.json();
                 return data.choices[0].message.content;
             }
 
-            getSimulationResult() {
-                return `⚠️ 시뮬레이션 모드\n\n환경변수에 OpenAI API 키가 설정되지 않아 시뮬레이션 모드로 실행됩니다.\n\n실제 AI 피드백을 받으려면:\n1. Vite: .env 파일에 VITE_OPENAI_API_KEY=your-api-key 추가\n2. Netlify: 사이트 설정에서 환경변수 VITE_OPENAI_API_KEY 추가\n\n=== 시뮬레이션 결과 ===\n코드가 정상적으로 실행될 것으로 예상됩니다.\n실제 결과를 보려면 API 키를 설정해주세요.`;
-            }
-
-            setLoadingState(isLoading) {
-                const { loading, runButton, helpButton } = this.elements;
+            simulateCodeExecution(code) {
+                // 간단한 파이썬 코드 시뮬레이션
+                let result = "=== 시뮬레이션 결과 ===\n\n";
                 
-                if (isLoading) {
-                    loading.classList.add('show');
-                    runButton.disabled = true;
-                    helpButton.disabled = true;
-                } else {
-                    loading.classList.remove('show');
-                    runButton.disabled = false;
-                    helpButton.disabled = false;
+                if (code.includes('print(')) {
+                    const printMatches = code.match(/print\([^)]*\)/g);
+                    if (printMatches) {
+                        printMatches.forEach(match => {
+                            const content = match.replace(/print\(['"]([^'"]*)['"]\)/, '$1');
+                            result += `출력: ${content}\n`;
+                        });
+                    }
                 }
-            }
-
-            showResult(message) {
-                this.elements.resultOutput.value = message;
-            }
-
-            handleError(error) {
-                console.error('API 호출 오류:', error);
-                this.showResult(`오류가 발생했습니다: ${error.message}\n\nAPI 키와 네트워크 연결을 확인해주세요.`);
-            }
-
-            showWelcomeMessage() {
-                const welcomeMessage = this.apiKey && this.apiKey.startsWith('sk-')
-                    ? `파이썬 학습환경에 오신 것을 환영합니다!\n\n✅ OpenAI API가 설정되어 있습니다.\n이제 AI 튜터의 도움을 받으며 학습할 수 있습니다!\n\n사용 방법:\n1. 좌측의 도전과제를 클릭하거나 직접 코드를 작성해보세요\n2. 실행하기 버튼을 눌러 AI가 예측한 실행 결과를 확인하세요\n3. 도움받기 버튼으로 상세한 코드 분석을 받을 수 있습니다\n\n팁: Ctrl+Enter로도 코드를 실행할 수 있습니다!`
-                    : `파이썬 학습환경에 오신 것을 환영합니다!\n\n⚠️ 현재 시뮬레이션 모드입니다.\n실제 AI 피드백을 받으려면 환경변수를 설정해주세요.\n\n환경변수 설정 방법:\n• Vite: .env 파일에 VITE_OPENAI_API_KEY=your-api-key\n• Netlify: 사이트 설정 → Environment variables → VITE_OPENAI_API_KEY\n\n사용 방법:\n1. 좌측의 도전과제를 클릭하거나 직접 코드를 작성해보세요\n2. 실행하기 버튼을 눌러 결과를 확인하세요\n3. 도움받기 버튼으로 상세한 설명을 받을 수 있습니다\n\n팁: Ctrl+Enter로도 코드를 실행할 수 있습니다!`;
                 
-                this.showResult(welcomeMessage);
+                if (code.includes('for ') && code.includes('range(')) {
+                    result += "반복문이 실행됩니다.\n";
+                }
+                
+                if (code.includes('if ')) {
+                    result += "조건문이 평가됩니다.\n";
+                }
+                
+                result += "\n⚠️ 시뮬레이션 모드입니다.\n실제 AI 분석을 원하시면 OpenAI API 키를 설정해주세요.";
+                
+                return result;
             }
-        }
 
-        // 애플리케이션 초기화
-        document.addEventListener('DOMContentLoaded', () => {
-            new PythonLearningApp();
-        });
+            simulateCodeHelp(code) {
+                let help = "=== 코드 분석 (시뮬레이션) ===\n\n";
+                
+                if (code.includes('print(')) {
+                    help += "📌 print() 함수를 사용하여 결과를 출력합니다.\n";
+                }
+                
+                if (code.includes('for ')) {
+                    help += "📌 for 반복문을 사용하여 반복 작업을 수행합니다.\n";
+                }
+                
+                if (code.includes('if ')) {
+                    help += "📌 if 조건문을 사용하여 조건에 따라 다른 동작을 합니다.\n";
+                }
+                
+                if (code.includes('def ')) {
+                    help += "📌 함수를 정의하여 코드를 재사용할 수 있게 만듭니다.\n";
+                }
+                
+                help += "\n⚠️ 시뮬레이션 모드입니다.\n자세한 AI 분석을 원하시면 OpenAI API 키를 설정해주세요.";
+                
+                return help;
+            }
 
-        // 전역에서 접근 가능하도록 (디버깅용)
-        window.PythonLearningApp = PythonLearningApp;
-    </script>
-</body>
-</html>
+            setLoadingState(
