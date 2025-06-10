@@ -401,47 +401,47 @@ for i in range(5):
             {
                 title: "2단계: 변수와 데이터 타입",
                 description: "문자열, 정수, 실수 변수를 만들고 출력해보세요.",
-                code: "#name = '홍길동'\n\#age = 25\nheight = 175.5\nprint(f'이름: {name}, 나이: {age}, 키: {height}cm')"
+                code: "#name = '홍길동'\n\#age = 25\n\#height = 175.5\n\#print(f'이름: {name}, 나이: {age}, 키: {height}cm')"
             },
             {
                 title: "3단계: 리스트 다루기",
                 description: "과일 이름들을 담은 리스트를 만들고 반복문으로 출력해보세요.",
-                code: "#fruits = ['사과', '바나나', '오렌지', '포도']\n#for fruit in fruits:\n#    print(f'좋아하는 과일: {fruit}')"
+                code: "#fruits = ['사과', '바나나', '오렌지', '포도']\n\#for fruit in fruits:\n\#    print(f'좋아하는 과일: {fruit}')"
             },
             {
                 title: "4단계: 조건문",
                 description: "숫자를 입력받아 짝수인지 홀수인지 판단하는 프로그램을 작성하세요.",
-                code: "#number = 10\n#if number % 2 == 0:\n#    print(f'{number}는 짝수입니다')\n#else:\n#    print(f'{number}는 홀수입니다')"
+                code: "#number = 10\n\#if number % 2 == 0:\n\#    print(f'{number}는 짝수입니다')\n#else:\n\#   print(f'{number}는 홀수입니다')"
             },
             {
                 title: "5단계: 반복문 (for)",
                 description: "1부터 10까지의 숫자를 출력하고, 그 합을 계산해보세요.",
-                code: "#total = 0\n#for i in range(1, 11):\n#    print(f'숫자: {i}')\n#    total += i\n#print(f'1부터 10까지의 합: {total}')"
+                code: "#total = 0\n\#for i in range(1, 11):\n\#    print(f'숫자: {i}')\n\#    total += i\n\#print(f'1부터 10까지의 합: {total}')"
             },
             {
                 title: "6단계: 함수 만들기",
                 description: "두 숫자를 더하는 함수를 만들고 사용해보세요.",
-                code: "def add_numbers(a, b):\n#    return a + b\n\n#result = add_numbers(5, 3)\n#print(f'5 + 3 = {result}')"
+                code: "def add_numbers(a, b):\n\#    return a + b\n\n#result = add_numbers(5, 3)\n\#print(f'5 + 3 = {result}')"
             },
             {
                 title: "7단계: 딕셔너리",
                 description: "학생의 정보를 딕셔너리로 저장하고 출력해보세요.",
-                code: "student = {\n#    '이름': '김학생',\n#    '나이': 20,\n#    '전공': '컴퓨터과학'\n}\nfor key, value in student.items():\n#    print(f'{key}: {value}')"
+                code: "student = {\n\#    '이름': '김학생',\n\#    '나이': 20,\n\#    '전공': '컴퓨터과학'\n\#}\n\#for key, value in student.items():\n\#    print(f'{key}: {value}')"
             },
             {
                 title: "8단계: 예외 처리",
                 description: "0으로 나누기 오류를 try-except로 처리해보세요.",
-                code: "try:\n#    a = 10\n#   b = 0\n#   result = a / b\n#   print(f'결과: {result}')\n#except ZeroDivisionError:\n#    print('0으로 나눌 수 없습니다!')"
+                code: "try:\n#    a = 10\n\#   b = 0\n\#   result = a / b\n\#   print(f'결과: {result}')\n\#except ZeroDivisionError:\n\#    print('0으로 나눌 수 없습니다!')"
             },
             {
                 title: "9단계: 클래스 만들기",
                 description: "간단한 Dog 클래스를 만들고 객체를 생성해보세요.",
-                code: "class Dog:\n#    def __init__(self, name, age):\n#        self.name = name\n#        self.age = age\n#    \n#    def bark(self):\n#        return f'{self.name}이 멍멍하고 짖습니다!'\n\n#my_dog = Dog('멍멍이', 3)\n#print(my_dog.bark())\n#print(f'{my_dog.name}는 {my_dog.age}살입니다.')"
+                code: "class Dog:\n\#    def __init__(self, name, age):\n\#        self.name = name\n\#        self.age = age\n\#    \n\#    def bark(self):\n\#        return f'{self.name}이 멍멍하고 짖습니다!'\n\n\#my_dog = Dog('멍멍이', 3)\n\#print(my_dog.bark())\n\#print(f'{my_dog.name}는 {my_dog.age}살입니다.')"
             },
             {
                 title: "10단계: 파일 다루기",
                 description: "텍스트 파일을 생성하고 내용을 읽어보는 프로그램을 작성해보세요.",
-                code: "# 파일에 쓰기\n#with open('test.txt', 'w', encoding='utf-8') as f:\n#    f.write('안녕하세요, 파이썬!')\n#    f.write('\\n파일 처리를 배우고 있습니다.')\n\n# 파일 읽기\n#with open('test.txt', 'r', encoding='utf-8') as f:\n#    content = f.read()\n#    print('파일 내용:')\n#    print(content)"
+                code: "# 파일에 쓰기\n\#with open('test.txt', 'w', encoding='utf-8') as f:\n\#    f.write('안녕하세요, 파이썬!')\n\#    f.write('\\n파일 처리를 배우고 있습니다.')\n\n\# 파일 읽기\n\#with open('test.txt', 'r', encoding='utf-8') as f:\n\#    content = f.read()\n\#    print('파일 내용:')\n\#    print(content)"
             }
         ];
 
